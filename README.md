@@ -1,6 +1,3 @@
-# Live Link
-
-https://study-ai-u1l3.vercel.app/
 
 # 📚 StudyAI
 
