@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 StudyAI
 
-## Getting Started
+StudyAI is an AI-powered study management platform designed to help students organize their learning, track revision progress, and improve productivity. The application provides subject management, revision tracking (R1, R2, R3), progress analytics, and note-taking features through a modern and responsive interface.
 
-First, run the development server:
+---
+
+## ✨ Features
+
+* 🔐 Secure Authentication
+* 📖 Subject & Topic Management
+* ✅ Revision Tracking (R1, R2, R3)
+* 📊 Progress Analytics Dashboard
+* 📝 Notes Management
+* 📅 Study Planning & Tracking
+* 📱 Responsive Design
+* ☁️ Cloud Database with Supabase
+
+---
+
+## 🖼️ Screenshots
+
+### Landing Page
+
+![Landing Page](./Screenshots/landing_page.jpeg)
+
+### Dashboard
+
+![Dashboard](./Screenshots/dashboard.jpeg)
+
+### Subject Management
+
+![Subject Page](./Screenshots/subject_page.jpeg)
+
+### Revision Tracker
+
+![Revision Tracker](./Screenshots/Revision.jpeg)
+
+### Study Plan
+
+![Study Plan](./Screenshots/study_plan.jpeg)
+
+### Analytics
+
+![Analytics](./Screenshots/analytics.jpeg)
+
+### AI Features
+
+![AI Features](./Screenshots/AI.jpeg)
+---
+
+## 🚀 Tech Stack
+
+* Next.js
+* React
+* JavaScript
+* Tailwind CSS
+* Supabase
+* PostgreSQL
+
+---
+
+## 🛠️ Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/your-username/studyai.git
+cd studyai
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env.local` file and add:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📂 Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```text
+StudyAI/
+├── app/
+├── components/
+├── lib/
+├── public/
+├── screenshots/
+├── Supabase/
+└── README.md
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 Future Improvements
 
-## Deploy on Vercel
+* AI-generated study recommendations
+* Smart revision scheduling
+* PDF report generation
+* Study streak tracking
+* Mobile application support
+* AI-powered note summaries
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 👨‍💻 Author
+
+Developed by Sparsh Chauhan as a student productivity and revision management platform.
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
