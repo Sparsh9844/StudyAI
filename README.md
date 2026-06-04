@@ -1,3 +1,7 @@
+# Live Link
+
+https://study-ai-u1l3.vercel.app/
+
 # 📚 StudyAI
 
 StudyAI is an AI-powered study management platform designed to help students organize their learning, track revision progress, and improve productivity. The application provides subject management, revision tracking (R1, R2, R3), progress analytics, and note-taking features through a modern and responsive interface.
