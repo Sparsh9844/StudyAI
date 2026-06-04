@@ -80,6 +80,7 @@ Create a `.env.local` file and add:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+GROQ_API_KEY = YOUR_KEY
 ```
 
 Run the development server:
