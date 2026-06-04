@@ -6,7 +6,7 @@ StudyAI is an AI-powered study management platform designed to help students org
 
 ## ✨ Features
 
-* 🔐 Secure Authentication
+* 🔐 Secure Authentication with email confirmation
 * 📖 Subject & Topic Management
 * ✅ Revision Tracking (R1, R2, R3)
 * 📊 Progress Analytics Dashboard
