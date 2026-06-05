@@ -217,3 +217,65 @@ html {
   mask-composite: exclude;
   pointer-events: none;
 }
+
+/* ── Responsive base (no media queries) ── */
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  /* fluid type */
+  font-size: clamp(14px, 1.2vw + 12px, 18px);
+  --site-max-width: 1200px;
+  --gutter: clamp(12px, 2vw, 32px);
+}
+
+/* Container that stays centered and scales with viewport */
+.container {
+  width: min(var(--site-max-width), 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+/* Fluid typography utilities */
+.fluid-h1 { font-size: clamp(1.6rem, 4vw, 3rem); line-height: 1.05; }
+.fluid-h2 { font-size: clamp(1.35rem, 3vw, 2.25rem); line-height: 1.1; }
+.fluid-text { font-size: clamp(0.95rem, 1.4vw, 1.125rem); }
+
+/* Responsive grid that adapts column count automatically */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(12px, 1.5vw, 24px);
+}
+
+/* Responsive flex helpers */
+.stack { display: flex; flex-direction: column; gap: clamp(8px, 1.2vw, 20px); }
+.row { display: flex; flex-wrap: wrap; gap: clamp(8px, 1.2vw, 20px); }
+
+/* Images and media scale fluidly */
+img, video, picture { max-width: 100%; height: auto; display: block; object-fit: cover; }
+
+/* Buttons & form controls scale with viewport */
+.btn, button, .input {
+  font-size: inherit;
+  padding: clamp(8px, 1.2vw, 14px) clamp(12px, 2vw, 20px);
+}
+
+/* Full-bleed utility without media queries */
+.full-bleed { width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
+
+/* Prevent overflow from long words */
+.break-words { overflow-wrap: break-word; word-break: break-word; }
+
+/* Touch-friendly minimum target */
+.touch-target { min-height: clamp(40px, 6vh, 56px); }
+
+/* Lightweight responsive spacing helpers */
+.gutter-x { padding-left: var(--gutter); padding-right: var(--gutter); }
+.space-y { gap: clamp(8px, 1.2vw, 20px); }
+
+/* Use responsive utilities in components: examples
+   - Use .container to wrap page content
+   - Use .responsive-grid to replace fixed-column grids
+   - Use .fluid-h1/.fluid-text for scalable typography
+*/

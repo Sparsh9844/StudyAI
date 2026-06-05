@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import Groq from 'groq-sdk'
+import { groqConfig } from '@/lib/groq-config'
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+
+const isDev = process.env.NODE_ENV === 'development'
 
 export async function POST(req) {
   try {
@@ -59,17 +62,36 @@ Return a JSON array of objects with these exact fields:
 
 Return ONLY the JSON array. No markdown, no code fences, no explanation.`
 
+    if (isDev) {
+      console.log('[Study Plan API] Request:', {
+        model: groqConfig.model,
+        subjectCount: subjectDetails.length,
+        subjectNames: subjectDetails.map(s => s.name),
+        days,
+      })
+    }
+
     const completion = await groq.chat.completions.create({
       messages: [
         { role: 'system', content: 'You are a precise study planner. Return ONLY valid JSON.' },
         { role: 'user', content: prompt },
       ],
-      model: "llama-3.3-70b-versatile",
-      temperature: 0.7,
-      max_tokens: 8192,
+      model: groqConfig.model,
+      temperature: groqConfig.temperature,
+      max_tokens: groqConfig.maxTokens,
     })
 
     const content = completion.choices[0]?.message?.content
+
+    if (isDev) {
+      console.log('[Study Plan API] Response:', {
+        model: completion.model,
+        usage: completion.usage,
+        finishReason: completion.choices?.[0]?.finish_reason,
+        contentLength: content?.length,
+      })
+    }
+
     if (!content) {
       return NextResponse.json({ plan: [], error: 'AI returned an empty response. Please try again.' }, { status: 500 })
     }
@@ -79,6 +101,7 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation.`
     try {
       plan = JSON.parse(cleaned)
     } catch {
+      if (isDev) console.error('[Study Plan API] Failed to parse AI response:', content.slice(0, 500))
       return NextResponse.json({ plan: [], error: 'AI returned invalid JSON. Please try again.' }, { status: 500 })
     }
 
@@ -88,10 +111,8 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation.`
 
     return NextResponse.json({ plan })
   } catch (error) {
-    console.error('Study plan API error:', error)
-    return NextResponse.json({
-      plan: [],
-      error: error.message || 'An unexpected error occurred while generating the study plan.',
-    }, { status: 500 })
+    const msg = error.message || 'An unexpected error occurred'
+    console.error('[Study Plan API] Error:', error)
+    return NextResponse.json({ plan: [], error: msg }, { status: 500 })
   }
 }

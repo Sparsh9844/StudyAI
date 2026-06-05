@@ -18,8 +18,8 @@ Return ONLY valid JSON array, no other text.`
     const cleaned = content.replace(/```json?/g, '').replace(/```/g, '').trim()
     return JSON.parse(cleaned)
   } catch (error) {
-    console.error('Groq API error:', error)
-    return []
+    console.error('Groq API error in generateStudyPlan:', error.message)
+    throw error
   }
 }
 
@@ -35,8 +35,8 @@ Format as HTML with proper headings and bullet points.`
     ])
     return response.choices[0]?.message?.content || 'Unable to generate notes.'
   } catch (error) {
-    console.error('Groq API error:', error)
-    return 'Error generating notes.'
+    console.error('Groq API error in generateNotes:', error.message)
+    throw error
   }
 }
 
@@ -53,7 +53,7 @@ Provide a clear, step-by-step explanation.`
     ])
     return response.choices[0]?.message?.content || 'Unable to answer.'
   } catch (error) {
-    console.error('Groq API error:', error)
-    return 'Error solving doubt.'
+    console.error('Groq API error in solveDoubt:', error.message)
+    throw error
   }
 }
