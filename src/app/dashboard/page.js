@@ -48,7 +48,7 @@ function ProgressRing({ progress, size = 100, strokeWidth = 6, color = '#6366f1'
 function StatCard({ label, value, icon: Icon, color, href, delay, suffix, trend }) {
   return (
     <Link href={href}>
-      <div className={`glass rounded-2xl p-5 cursor-pointer group relative overflow-hidden animate-fade-in-up delay-${delay}`}>
+      <div className={`glass rounded-2xl p-4 sm:p-5 cursor-pointer group relative overflow-hidden animate-fade-in-up delay-${delay}`}>
         {/* Hover glow */}
         <div className={`absolute -inset-20 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-[0.03] blur-3xl transition-opacity duration-500`} />
         
@@ -159,8 +159,8 @@ export default function DashboardPage() {
       {/* ── Hero Header ── */}
       <div className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-pink-900/20 border border-white/[0.06] animate-scale-in">
         <div className="absolute inset-0 bg-grid opacity-30" />
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="hidden lg:block absolute -top-40 -right-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl" />
+        <div className="hidden lg:block absolute -bottom-20 -left-20 w-60 h-60 bg-purple-500/10 rounded-full blur-3xl" />
         
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="space-y-3">
@@ -183,7 +183,9 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex flex-col items-center">
-            <ProgressRing progress={stats?.completionRate || 0} size={110} strokeWidth={7} color="#818cf8" />
+            <div className="transform scale-75 sm:scale-90 md:scale-100">
+              <ProgressRing progress={stats?.completionRate || 0} size={110} strokeWidth={7} color="#818cf8" />
+            </div>
             <span className="text-gray-500 text-xs mt-2 font-medium">Overall Progress</span>
           </div>
         </div>
@@ -251,7 +253,7 @@ export default function DashboardPage() {
           {/* Quick Actions */}
           <div>
             <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {quickActions.map(({ label, desc, icon: Icon, href, color }, idx) => (
                 <Link key={label} href={href}>
                   <div className={`glass rounded-2xl p-4 glass-hover h-full animate-fade-in-up delay-${(idx + 1) * 100}`}>
