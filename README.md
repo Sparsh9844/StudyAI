@@ -54,12 +54,12 @@ StudyAI is an AI-powered study management platform designed to help students org
 
 ## 🚀 Tech Stack
 
-* Next.js
-* React
-* JavaScript
+* React 19 + Vite
+* React Router
 * Tailwind CSS
-* Supabase
-* PostgreSQL
+* Express 5 (API server)
+* Supabase (Auth + PostgreSQL)
+* Groq (AI assistant)
 
 ---
 
@@ -68,28 +68,28 @@ StudyAI is an AI-powered study management platform designed to help students org
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/studyai.git
-cd studyai
+git clone https://github.com/Sparsh9844/StudyAI.git
+cd StudyAI
 ```
 
-Install dependencies:
+Install dependencies (Node.js 20 or newer):
 
 ```bash
 npm install
 ```
 
-Create a `.env.local` file and add:
+Copy `.env.example` to `.env.local` and fill in your values:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-GROQ_API_KEY = YOUR_KEY
+GROQ_API_KEY=your_groq_api_key
 ```
 
-Run the development server:
+Run the frontend and API together:
 
 ```bash
-npm run dev
+npm run dev:all
 ```
 
 Open:
@@ -100,16 +100,39 @@ http://localhost:3000
 
 ---
 
+## ☁️ Deployment (Vercel)
+
+The frontend is served from Vercel's CDN and the Express API runs as a
+single serverless function (`api/index.js`). `vercel.json` holds the build
+settings, routing and headers.
+
+1. Import the GitHub repo in Vercel (settings are read from `vercel.json`).
+2. Add the environment variables from `.env.example` under
+   **Project → Settings → Environment Variables**.
+3. In Supabase → **Authentication → URL Configuration**, set **Site URL** to
+   your Vercel domain and add `https://<your-domain>/auth/reset-password`
+   to **Redirect URLs**.
+
+To self-host instead: `npm run build && npm start` serves the app and API
+from one Express process.
+
+---
+
 ## 📂 Project Structure
 
 ```text
 StudyAI/
-├── app/
-├── components/
-├── lib/
+├── api/            # Vercel serverless entry (wraps the Express app)
+├── server/         # Express API: auth session cookies, AI routes
+├── src/
+│   ├── app/        # Pages (one folder per route)
+│   ├── components/ # Layout and UI components
+│   ├── data/       # Static study content (DSA sheet, Core CS, aptitude)
+│   ├── hooks/
+│   ├── lib/
+│   └── services/
 ├── public/
-├── screenshots/
-├── Supabase/
+├── vercel.json
 └── README.md
 ```
 

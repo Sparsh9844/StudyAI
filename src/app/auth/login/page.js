@@ -1,7 +1,5 @@
-'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useNavigate, Link } from 'react-router-dom'
 import { signIn } from '@/services/auth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -13,7 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -24,7 +22,7 @@ export default function LoginPage() {
       toast.error(error.message)
     } else {
       toast.success('Welcome back!')
-      router.push('/dashboard')
+      navigate('/dashboard', { replace: true })
     }
   }
 
@@ -41,14 +39,19 @@ export default function LoginPage() {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
-          <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+          <div className="space-y-1.5">
+            <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required autoComplete="current-password" />
+            <div className="text-right">
+              <Link to="/auth/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300">Forgot password?</Link>
+            </div>
+          </div>
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
         <p className="text-center text-gray-400 mt-6 text-sm">
           Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-indigo-400 hover:text-indigo-300">Sign up</Link>
+          <Link to="/auth/register" className="text-indigo-400 hover:text-indigo-300">Sign up</Link>
         </p>
       </Card>
     </div>

@@ -1,11 +1,12 @@
-'use client'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@/hooks/useAuth'
+import { CookieConsent } from '@/components/CookieConsent'
 
 export function Providers({ children }) {
   return (
     <AuthProvider>
       {children}
+      <CookieConsent />
       <Toaster
         position="top-right"
         toastOptions={{

@@ -1,4 +1,3 @@
-'use client'
 import { cn } from '@/utils/helpers'
 
 export function Select({ label, options, error, className, ...props }) {

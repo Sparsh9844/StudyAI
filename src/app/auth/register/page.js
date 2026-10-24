@@ -1,7 +1,5 @@
-'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useNavigate, Link } from 'react-router-dom'
 import { signUp } from '@/services/auth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -14,7 +12,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -25,7 +23,7 @@ export default function RegisterPage() {
       toast.error(error.message)
     } else {
       toast.success('Account created! Check your email to confirm.')
-      router.push('/auth/login')
+      navigate('/auth/login', { replace: true })
     }
   }
 
@@ -50,7 +48,7 @@ export default function RegisterPage() {
         </form>
         <p className="text-center text-gray-400 mt-6 text-sm">
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-indigo-400 hover:text-indigo-300">Sign in</Link>
+          <Link to="/auth/login" className="text-indigo-400 hover:text-indigo-300">Sign in</Link>
         </p>
       </Card>
     </div>

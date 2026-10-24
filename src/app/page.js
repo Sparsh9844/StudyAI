@@ -1,8 +1,6 @@
-'use client'
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
+import { Link } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import {
   Menu, X, Sparkles, ArrowRight, Check, Star, ChevronDown,
   BrainCircuit, CalendarRange, BarChart3, RefreshCw, Bot, Shield,
@@ -14,18 +12,13 @@ import {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [user, setUser] = useState(null)
-  const router = useRouter()
+  // Cached session from AuthProvider — no extra network round trip
+  const { user } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setUser(data?.user || null))
   }, [])
 
   const links = [
@@ -44,7 +37,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link to="/" className="flex items-center gap-2.5 group">
             <div className="relative">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
                 <Sparkles className="w-5 h-5 text-white" />
@@ -67,17 +60,17 @@ function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <Link
-                href="/dashboard"
+                to="/dashboard"
                 className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-500/25 transition-all hover:shadow-indigo-500/40"
               >
                 Dashboard
               </Link>
             ) : (
               <>
-                <Link href="/auth/login"
+                <Link to="/auth/login"
                   className="px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white transition-colors"
                 >Sign In</Link>
-                <Link href="/auth/register"
+                <Link to="/auth/register"
                   className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-500/25 transition-all hover:shadow-indigo-500/40"
                 >Get Started Free</Link>
               </>
@@ -103,15 +96,15 @@ function Navbar() {
           ))}
           <div className="pt-3 border-t border-white/[0.06] space-y-3">
             {user ? (
-              <Link href="/dashboard" onClick={() => setMobileOpen(false)}
+              <Link to="/dashboard" onClick={() => setMobileOpen(false)}
                 className="block w-full text-center px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium"
               >Dashboard</Link>
             ) : (
               <>
-                <Link href="/auth/login" onClick={() => setMobileOpen(false)}
+                <Link to="/auth/login" onClick={() => setMobileOpen(false)}
                   className="block w-full text-center px-5 py-3 rounded-xl border border-white/10 text-gray-300 text-sm font-medium hover:bg-white/5"
                 >Sign In</Link>
-                <Link href="/auth/register" onClick={() => setMobileOpen(false)}
+                <Link to="/auth/register" onClick={() => setMobileOpen(false)}
                   className="block w-full text-center px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium"
                 >Get Started Free</Link>
               </>
@@ -285,7 +278,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start animate-fade-in-up delay-300">
                 <Link
-                  href="/auth/register"
+                  to="/auth/register"
                   className="group w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all inline-flex items-center justify-center gap-2"
                 >
                   Start Studying Free
@@ -455,7 +448,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <Link
-                  href="/auth/register"
+                  to="/auth/register"
                   className="group px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-500/25 transition-all inline-flex items-center gap-2"
                 >
                   Get Started Free
@@ -479,7 +472,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-10">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="flex items-center gap-2 mb-4">
+              <Link to="/" className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>

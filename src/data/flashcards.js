@@ -1,0 +1,98 @@
+// Flashcards for CS Interview Preparation
+// Each card: { id, q (question front), a (answer back) }
+// Grouped by deck for tab navigation
+
+export const flashcardDecks = [
+  {
+    id: 'os',
+    name: 'Operating Systems',
+    color: 'from-violet-500 to-purple-600',
+    border: 'border-violet-500/20',
+    bg: 'bg-violet-500/10',
+    text: 'text-violet-400',
+    cards: [
+      { id: 'os-1',  q: 'What are the four necessary conditions for a deadlock?', a: 'Mutual Exclusion, Hold & Wait, No Preemption, and Circular Wait. All four must hold simultaneously for a deadlock to occur.' },
+      { id: 'os-2',  q: 'What is the difference between a process and a thread?', a: 'A process is an independent program in execution with its own memory space. A thread is a lightweight unit within a process that shares the process\'s memory and resources.' },
+      { id: 'os-3',  q: 'What is virtual memory?', a: 'Virtual memory allows a process to use more memory than physically available by storing parts of it on disk (swap space). The OS maps virtual addresses to physical addresses using page tables.' },
+      { id: 'os-4',  q: 'Explain the Banker\'s Algorithm.', a: 'A deadlock avoidance algorithm. It checks if granting a resource request keeps the system in a "safe state" — a state where all processes can eventually complete.' },
+      { id: 'os-5',  q: 'What is the difference between paging and segmentation?', a: 'Paging divides memory into fixed-size blocks (pages), eliminating external fragmentation. Segmentation divides it into logical units of variable size. Paging is hardware-driven; segmentation is logical.' },
+      { id: 'os-6',  q: 'What is Belady\'s Anomaly?', a: 'In FIFO page replacement, increasing the number of frames can sometimes increase page faults. This counter-intuitive behaviour is Belady\'s Anomaly. It does NOT occur in LRU or Optimal.' },
+      { id: 'os-7',  q: 'What is a semaphore? Types?', a: 'A semaphore is a synchronization primitive. Binary semaphore (0/1) works like a mutex lock. Counting semaphore allows a resource to be used by N processes simultaneously.' },
+      { id: 'os-8',  q: 'What is thrashing?', a: 'Thrashing occurs when a process spends more time swapping pages in/out than executing, because it has too few frames. The system becomes unresponsive as page faults skyrocket.' },
+      { id: 'os-9',  q: 'What is the difference between preemptive and non-preemptive scheduling?', a: 'Preemptive: the CPU can be taken from a running process (e.g., SRTF, Round Robin). Non-preemptive: a process runs until it voluntarily releases the CPU (e.g., FCFS, SJF).' },
+      { id: 'os-10', q: 'What is a context switch?', a: 'Saving the state (PCB) of the currently running process and loading the state of the next scheduled process. It has overhead but enables multitasking.' },
+      { id: 'os-11', q: 'What is the difference between internal and external fragmentation?', a: 'Internal fragmentation: wasted space inside an allocated block (paging). External fragmentation: free memory scattered in small pieces between allocations (segmentation/contiguous allocation).' },
+      { id: 'os-12', q: 'Explain the concept of a critical section.', a: 'A critical section is a code segment that accesses shared resources. Only one process should be in the critical section at a time. Solved using locks, semaphores, or monitors.' },
+    ],
+  },
+  {
+    id: 'dbms',
+    name: 'DBMS',
+    color: 'from-blue-500 to-cyan-500',
+    border: 'border-blue-500/20',
+    bg: 'bg-blue-500/10',
+    text: 'text-blue-400',
+    cards: [
+      { id: 'db-1',  q: 'What are ACID properties?', a: 'Atomicity (all or nothing), Consistency (valid state to valid state), Isolation (concurrent transactions don\'t interfere), Durability (committed data survives crashes).' },
+      { id: 'db-2',  q: 'What is normalisation? Name the normal forms.', a: 'Normalisation eliminates redundancy and anomalies by organising tables. Forms: 1NF (atomic values), 2NF (no partial dependency), 3NF (no transitive dependency), BCNF (every determinant is a candidate key).' },
+      { id: 'db-3',  q: 'What is the difference between DELETE, TRUNCATE, and DROP?', a: 'DELETE removes rows with a WHERE clause, is logged, and can be rolled back. TRUNCATE removes all rows, is faster, and cannot be rolled back. DROP removes the entire table and its structure.' },
+      { id: 'db-4',  q: 'What is a foreign key?', a: 'A column (or set of columns) in one table that references the primary key of another table. It enforces referential integrity — you can\'t insert a value that doesn\'t exist in the referenced table.' },
+      { id: 'db-5',  q: 'Explain the difference between HAVING and WHERE.', a: 'WHERE filters rows before grouping (operates on raw rows). HAVING filters groups after GROUP BY (operates on aggregated results).' },
+      { id: 'db-6',  q: 'What is a transaction? What are its states?', a: 'A transaction is a unit of work. States: Active → Partially Committed → Committed (success) or Failed → Aborted (rollback).' },
+      { id: 'db-7',  q: 'What is the difference between clustered and non-clustered indexes?', a: 'Clustered index physically reorders the table data to match the index (one per table, faster range queries). Non-clustered index is a separate structure pointing to table rows (multiple allowed).' },
+      { id: 'db-8',  q: 'What is a view? When would you use one?', a: 'A view is a virtual table based on a SELECT query. Use it to: simplify complex queries, restrict column access for security, or present data in a different format without duplicating it.' },
+      { id: 'db-9',  q: 'Explain the difference between INNER JOIN and LEFT JOIN.', a: 'INNER JOIN returns only rows with matching values in both tables. LEFT JOIN returns all rows from the left table, with NULLs for unmatched rows in the right table.' },
+      { id: 'db-10', q: 'What is denormalisation?', a: 'Intentionally introducing redundancy into a database to improve read performance. Used in data warehouses and reporting systems where joins are expensive.' },
+      { id: 'db-11', q: 'What is the CAP theorem?', a: 'A distributed system can guarantee at most two of: Consistency (every read gets the latest write), Availability (every request gets a response), Partition Tolerance (system works despite network splits).' },
+      { id: 'db-12', q: 'What is a deadlock in DBMS? How is it prevented?', a: 'Two or more transactions wait for each other\'s locks indefinitely. Prevention: use timeouts, wound-wait / wait-die schemes, or require transactions to acquire all locks upfront.' },
+    ],
+  },
+  {
+    id: 'cn',
+    name: 'Computer Networks',
+    color: 'from-emerald-500 to-teal-500',
+    border: 'border-emerald-500/20',
+    bg: 'bg-emerald-500/10',
+    text: 'text-emerald-400',
+    cards: [
+      { id: 'cn-1',  q: 'What are the 7 layers of the OSI model?', a: 'Physical, Data Link, Network, Transport, Session, Presentation, Application. Mnemonic: "Please Do Not Throw Sausage Pizza Away".' },
+      { id: 'cn-2',  q: 'What is the difference between TCP and UDP?', a: 'TCP: connection-oriented, reliable, ordered, slower (HTTP, FTP, SMTP). UDP: connectionless, unreliable, faster (DNS, streaming, VoIP). TCP uses a 3-way handshake; UDP has no handshake.' },
+      { id: 'cn-3',  q: 'Explain the TCP 3-way handshake.', a: '1. SYN: client sends SYN to server. 2. SYN-ACK: server acknowledges and sends its own SYN. 3. ACK: client acknowledges. Connection established. For teardown: 4-way FIN.' },
+      { id: 'cn-4',  q: 'What is the difference between a hub, switch, and router?', a: 'Hub (Layer 1): broadcasts to all ports. Switch (Layer 2): forwards frames based on MAC address. Router (Layer 3): routes packets between different networks using IP addresses.' },
+      { id: 'cn-5',  q: 'What is DNS and how does it work?', a: 'DNS (Domain Name System) translates domain names to IP addresses. Process: check local cache → OS resolver → ISP DNS → recursive lookup to root → TLD → authoritative server.' },
+      { id: 'cn-6',  q: 'What is the difference between IPv4 and IPv6?', a: 'IPv4: 32-bit address (4.3 billion addresses). IPv6: 128-bit address (virtually unlimited). IPv6 also has better security (IPSec built-in), no NAT needed, and auto-configuration.' },
+      { id: 'cn-7',  q: 'What is HTTPS and how does it differ from HTTP?', a: 'HTTPS = HTTP + TLS/SSL encryption. Ensures data confidentiality, integrity, and server authentication via certificates. HTTP is plaintext; HTTPS encrypts all communication.' },
+      { id: 'cn-8',  q: 'What is subnetting?', a: 'Dividing a larger network into smaller sub-networks using a subnet mask. Reduces broadcast domains, improves security, and makes IP allocation more efficient.' },
+      { id: 'cn-9',  q: 'What is the difference between ARP and RARP?', a: 'ARP (Address Resolution Protocol): maps IP address → MAC address. RARP (Reverse ARP): maps MAC address → IP address (used by diskless workstations; now replaced by DHCP).' },
+      { id: 'cn-10', q: 'What is a firewall?', a: 'A network security device that monitors and filters incoming/outgoing traffic based on predefined rules. Can be hardware or software. Types: packet filter, stateful, application-layer (proxy).' },
+      { id: 'cn-11', q: 'What is NAT (Network Address Translation)?', a: 'NAT maps private IP addresses to a single public IP. Allows multiple devices on a LAN to share one public IP. Types: Static NAT, Dynamic NAT, PAT (Port Address Translation).' },
+      { id: 'cn-12', q: 'Explain congestion control in TCP.', a: 'TCP uses slow start (exponential growth), congestion avoidance (linear growth), fast retransmit (retransmit on 3 duplicate ACKs), and fast recovery to adapt to network congestion.' },
+    ],
+  },
+  {
+    id: 'system-design',
+    name: 'System Design',
+    color: 'from-orange-500 to-amber-500',
+    border: 'border-orange-500/20',
+    bg: 'bg-orange-500/10',
+    text: 'text-orange-400',
+    cards: [
+      { id: 'sd-1',  q: 'What is horizontal vs vertical scaling?', a: 'Vertical scaling (scale up): add more CPU/RAM to existing machine. Horizontal scaling (scale out): add more machines. Horizontal is preferred for large-scale systems (no single point of failure).' },
+      { id: 'sd-2',  q: 'What is a load balancer?', a: 'Distributes incoming requests across multiple servers to prevent overload. Algorithms: Round Robin, Least Connections, IP Hash. Improves availability and throughput.' },
+      { id: 'sd-3',  q: 'What is caching? Name common caching strategies.', a: 'Storing frequently accessed data in fast memory (Redis/Memcached). Strategies: Cache-aside (app manages cache), Write-through (write to cache and DB), Write-back (write to cache, async to DB), Read-through.' },
+      { id: 'sd-4',  q: 'What is a CDN?', a: 'Content Delivery Network: geographically distributed servers that cache static assets (images, JS, CSS) close to users. Reduces latency and origin server load. Examples: Cloudflare, AWS CloudFront.' },
+      { id: 'sd-5',  q: 'What is the difference between SQL and NoSQL databases?', a: 'SQL: structured, ACID, good for complex queries and relationships (MySQL, PostgreSQL). NoSQL: flexible schema, high scalability, eventual consistency (MongoDB, Cassandra, Redis). Choose based on your data model.' },
+      { id: 'sd-6',  q: 'What is database sharding?', a: 'Horizontally partitioning data across multiple databases (shards), each holding a subset of data. Improves scalability but adds complexity to queries and transactions spanning multiple shards.' },
+      { id: 'sd-7',  q: 'What is message queue? Give examples.', a: 'An async communication system where producers send messages to a queue and consumers process them independently. Decouples services and handles traffic spikes. Examples: RabbitMQ, Apache Kafka, AWS SQS.' },
+      { id: 'sd-8',  q: 'Explain consistent hashing.', a: 'A technique for distributing data across nodes so adding/removing a node only remaps a fraction of keys. Used in distributed caches and databases. Reduces cache misses during scaling.' },
+      { id: 'sd-9',  q: 'What is the difference between monolith and microservices?', a: 'Monolith: single deployable unit, simple but scales poorly. Microservices: small independent services communicating via APIs, scalable and fault-isolated but operationally complex.' },
+      { id: 'sd-10', q: 'What is rate limiting?', a: 'Restricting the number of requests a client can make in a time window. Protects against DDoS and abuse. Common algorithms: Token Bucket, Leaky Bucket, Fixed Window, Sliding Window.' },
+      { id: 'sd-11', q: 'What is an API Gateway?', a: 'A single entry point for all client requests that handles routing, authentication, rate limiting, and SSL termination. Examples: AWS API Gateway, Kong, NGINX.' },
+      { id: 'sd-12', q: 'What is eventual consistency?', a: 'In distributed systems, all nodes will eventually converge to the same state but may temporarily return stale data. Traded against availability (CAP theorem). Used by DynamoDB, Cassandra.' },
+    ],
+  },
+]
+
+export const allFlashcards = flashcardDecks.flatMap(d =>
+  d.cards.map(c => ({ ...c, deckId: d.id, deckName: d.name }))
+)

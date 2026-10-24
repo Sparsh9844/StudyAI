@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudyAI - Smart Study Planner</title>
+    <meta name="description" content="AI-powered study planner and revision tracker" />
+
+    <!-- Preconnect to critical origins so DNS+TLS is resolved before JS fires -->
+    <!-- Supabase project URL -->
+    <link rel="preconnect" href="https://afcpjoqpeiaremypvpyq.supabase.co" crossorigin />
+
+    <!-- Google Analytics — load async so it never blocks rendering -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6CP8SYQC77"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-6CP8SYQC77');
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!--
+      Vite injects the correct hashed script tag here at build time.
+      The modulepreload links it auto-generates ensure the browser
+      fetches critical chunks in parallel with the main entry.
+    -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
