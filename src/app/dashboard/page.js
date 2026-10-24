@@ -1,356 +1,319 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase'
-import { Card } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
+import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import {
-  BookOpen, CheckCircle2, Clock, TrendingUp, Target, Sparkles, ArrowRight,
-  Calendar, BrainCircuit, FileText, Download, GraduationCap, Zap,
+  Code2, Brain, Cpu, ChevronRight,
+  CalendarDays, Zap, Target, Briefcase,
+  Circle, CheckCircle2, Layers,
 } from 'lucide-react'
-import Link from 'next/link'
+import { allProblems } from '@/data/dsaSheet'
 
-function ProgressRing({ progress, size = 100, strokeWidth = 6, color = '#6366f1' }) {
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (progress / 100) * circumference
+// ── Time-based greeting ───────────────────────────────────────
+function getGreeting() {
+  const h = new Date().getHours()
+  if (h < 5)  return ['Night owl, huh?',   'Get some rest — you\'ll learn better fresh.']
+  if (h < 12) return ['Good morning',       'A great day to get ahead.']
+  if (h < 17) return ['Good afternoon',     'Stay focused, you\'re doing great.']
+  if (h < 21) return ['Good evening',       'One last push before calling it a day.']
+  return              ['Long day?',          'A little more and then rest well.']
+}
 
+// ── DSA progress from localStorage ───────────────────────────
+function getDSAProgress() {
+  try {
+    const solved = JSON.parse(localStorage.getItem('dsa-sheet-solved') || '{}')
+    const basic  = allProblems.filter(p => p.difficulty === 'Easy')
+    const core   = allProblems.filter(p => p.difficulty === 'Medium')
+    const pro    = allProblems.filter(p => p.difficulty === 'Hard')
+    return {
+      basic:  { done: basic.filter(p => solved[p.id]).length,  total: basic.length  },
+      core:   { done: core.filter(p => solved[p.id]).length,   total: core.length   },
+      pro:    { done: pro.filter(p => solved[p.id]).length,    total: pro.length    },
+      total:  { done: Object.values(solved).filter(Boolean).length, total: allProblems.length },
+    }
+  } catch {
+    return { basic:{done:0,total:0}, core:{done:0,total:0}, pro:{done:0,total:0}, total:{done:0,total:0} }
+  }
+}
+
+// ── Problem of the Day ────────────────────────────────────────
+function getProblemOfDay() {
+  try {
+    const solved  = JSON.parse(localStorage.getItem('dsa-sheet-solved') || '{}')
+    const unsolved = allProblems.filter(p => !solved[p.id])
+    if (!unsolved.length) return null
+    return unsolved[new Date().getDate() % unsolved.length]
+  } catch { return allProblems[0] }
+}
+
+// ── Interview tracker stats from localStorage ─────────────────
+function getInterviewStats() {
+  try {
+    const entries = JSON.parse(localStorage.getItem('studyai-interview-tracker') || '[]')
+    return {
+      total:     entries.length,
+      applied:   entries.filter(e => e.status === 'applied').length,
+      interview: entries.filter(e => e.status === 'interview').length,
+      offer:     entries.filter(e => e.status === 'offer').length,
+      rejected:  entries.filter(e => e.status === 'rejected').length,
+    }
+  } catch { return { total:0, applied:0, interview:0, offer:0, rejected:0 } }
+}
+
+// ── Multi-segment arc ring ────────────────────────────────────
+function DSARing({ basic, core, pro, total, size = 110, sw = 9 }) {
+  const r    = (size - sw) / 2
+  const circ = 2 * Math.PI * r
+  const basicFrac = basic.total ? (basic.done / basic.total) * 0.33 : 0
+  const coreFrac  = core.total  ? (core.done  / core.total)  * 0.34 : 0
+  const proFrac   = pro.total   ? (pro.done   / pro.total)   * 0.33 : 0
   return (
     <div className="relative inline-flex items-center justify-center">
-      <svg width={size} height={size} className="ring-progress">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="rgba(255,255,255,0.06)"
-          strokeWidth={strokeWidth}
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          style={{ transition: 'stroke-dashoffset 1.5s ease-in-out' }}
-        />
+      <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={sw} />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#22c55e" strokeWidth={sw} strokeLinecap="round"
+          strokeDasharray={`${basicFrac * circ} ${circ}`} />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#eab308" strokeWidth={sw} strokeLinecap="round"
+          strokeDasharray={`${coreFrac * circ} ${circ}`}
+          style={{ transform: `rotate(${basicFrac * 360}deg)`, transformOrigin: '50% 50%' }} />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#ef4444" strokeWidth={sw} strokeLinecap="round"
+          strokeDasharray={`${proFrac * circ} ${circ}`}
+          style={{ transform: `rotate(${(basicFrac + coreFrac) * 360}deg)`, transformOrigin: '50% 50%' }} />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-2xl font-bold text-white">{progress}%</span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-xl font-bold text-white">{total.done}</span>
+        <span className="text-[10px] text-zinc-500">/ {total.total}</span>
       </div>
     </div>
   )
 }
 
-function StatCard({ label, value, icon: Icon, color, href, delay, suffix, trend }) {
-  return (
-    <Link href={href}>
-      <div className={`glass rounded-2xl p-4 sm:p-5 cursor-pointer group relative overflow-hidden animate-fade-in-up delay-${delay}`}>
-        {/* Hover glow */}
-        <div className={`absolute -inset-20 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-[0.03] blur-3xl transition-opacity duration-500`} />
-        
-        <div className="flex items-start justify-between relative z-10">
-          <div className="space-y-2">
-            <p className="text-gray-500 text-sm font-medium">{label}</p>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-bold text-white tracking-tight">{value}</span>
-              {suffix && <span className="text-gray-400 text-sm font-medium">{suffix}</span>}
-            </div>
-            {trend && (
-              <div className="flex items-center gap-1 text-xs text-emerald-400">
-                <TrendingUp className="w-3 h-3" />
-                {trend}
-              </div>
-            )}
-          </div>
-          <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${color} p-2.5 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
-            <Icon className="w-full h-full text-white" />
-          </div>
-        </div>
-      </div>
-    </Link>
-  )
-}
-
 export default function DashboardPage() {
-  const [stats, setStats] = useState(null)
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [subjects, setSubjects] = useState([])
-  const [topics, setTopics] = useState([])
-  const supabase = createClient()
+  // AppShell only renders this page once auth has resolved
+  const { user, loading } = useAuth()
 
-  useEffect(() => {
-    const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setLoading(false); return }
-      setUser(user)
+  const dsaProgress    = useMemo(() => getDSAProgress(), [])
+  const potd           = useMemo(() => getProblemOfDay(), [])
+  const ivStats        = useMemo(() => getInterviewStats(), [])
+  const [greeting, sub] = getGreeting()
+  const firstName = user?.user_metadata?.full_name?.split(' ')[0]
+                 || user?.email?.split('@')[0]
+                 || 'there'
 
-      const { data: subjects } = await supabase.from('subjects').select('*').eq('user_id', user.id)
-      const { data: topics } = await supabase.from('topics').select('*, subject:subjects(name)').eq('user_id', user.id)
-
-      setSubjects(subjects || [])
-      setTopics(topics || [])
-
-      const total = topics?.length || 0
-      const completed = topics?.filter(t => t.status === 'completed').length || 0
-      const inProgress = topics?.filter(t => t.status === 'in_progress').length || 0
-      const pending = topics?.filter(t => t.status === 'pending').length || 0
-
-      setStats({
-        totalSubjects: subjects?.length || 0,
-        totalTopics: total,
-        completed,
-        inProgress,
-        pending,
-        completionRate: total ? Math.round((completed / total) * 100) : 0,
-        upcomingExams: subjects?.filter(s => s.exam_date && new Date(s.exam_date) > new Date()).length || 0,
-        r1: topics?.filter(t => t.revision_1).length || 0,
-        r2: topics?.filter(t => t.revision_2).length || 0,
-        r3: topics?.filter(t => t.revision_3).length || 0,
-      })
-      setLoading(false)
-    }
-    load()
+  // Flashcard progress
+  const flashcardProgress = useMemo(() => {
+    try {
+      const p = JSON.parse(localStorage.getItem('studyai-flashcards') || '{}')
+      const known = Object.values(p).filter(v => v === 'known').length
+      const total = 48 // 4 decks × 12 cards
+      return { known, total }
+    } catch { return { known: 0, total: 48 } }
   }, [])
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="shimmer h-48 rounded-2xl" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="shimmer h-28 rounded-2xl" />)}
+  const exploreCards = [
+    { label: 'DSA Sheet',         desc: `${dsaProgress.total.done}/${allProblems.length} solved`,  icon: Code2,     href: '/dsa',               color: 'text-indigo-400',  bg: 'bg-indigo-500/10'  },
+    { label: 'Core CS',           desc: 'DBMS · OS · Computer Networks',                           icon: Cpu,       href: '/core-cs',           color: 'text-blue-400',    bg: 'bg-blue-500/10'    },
+    { label: 'Aptitude Kit',      desc: 'Placement test practice',                                 icon: Brain,     href: '/aptitude',          color: 'text-purple-400',  bg: 'bg-purple-500/10'  },
+    { label: 'Interview Tracker', desc: `${ivStats.total} applications tracked`,                   icon: Briefcase, href: '/interview-tracker', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  ]
+
+  if (loading) return (
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-6">
+      <div className="space-y-5">
+        <div className="shimmer h-14 rounded-xl" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[1,2,3,4].map(i => <div key={i} className="shimmer h-20 rounded-xl" />)}
         </div>
       </div>
-    )
-  }
-
-  const statCards = [
-    { label: 'Subjects', value: stats?.totalSubjects, icon: BookOpen, color: 'from-blue-500 to-cyan-500', href: '/subjects', delay: 100 },
-    { label: 'Completed', value: stats?.completed, icon: CheckCircle2, color: 'from-emerald-500 to-green-500', href: '/subjects', delay: 200, suffix: `/ ${stats?.totalTopics}`, trend: stats?.totalTopics ? `${Math.round((stats.completed / stats.totalTopics) * 100)}% rate` : null },
-    { label: 'In Progress', value: stats?.inProgress, icon: Clock, color: 'from-amber-500 to-orange-500', href: '/study-plan', delay: 300 },
-    { label: 'Upcoming Exams', value: stats?.upcomingExams, icon: Target, color: 'from-purple-500 to-pink-500', href: '/subjects', delay: 400 },
-  ]
-
-  const subjectProgress = subjects.map(s => {
-    const t = topics.filter(t => t.subject_id === s.id)
-    const completed = t.filter(t => t.status === 'completed').length
-    const pct = t.length ? Math.round((completed / t.length) * 100) : 0
-    return { ...s, topicCount: t.length, completedCount: completed, progress: pct }
-  }).sort((a, b) => b.progress - a.progress)
-
-  const quickActions = [
-    { label: 'Add Subject', desc: 'Create a new study subject', icon: BookOpen, href: '/subjects', color: 'from-blue-500 to-cyan-500' },
-    { label: 'Generate Plan', desc: 'AI-powered study schedule', icon: BrainCircuit, href: '/study-plan', color: 'from-violet-500 to-purple-500' },
-    { label: 'AI Assistant', desc: 'Chat, notes & doubt solving', icon: Sparkles, href: '/assistant', color: 'from-amber-500 to-pink-500' },
-    { label: 'View Analytics', desc: 'Track your performance', icon: TrendingUp, href: '/analytics', color: 'from-emerald-500 to-teal-500' },
-  ]
-
-  const recentTopics = [...topics].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5)
-
-  const name = user?.user_metadata?.full_name || 'there'
+      <div className="shimmer h-56 rounded-xl" />
+    </div>
+  )
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-6 pb-12">
 
-      {/* ── Hero Header ── */}
-      <div className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-pink-900/20 border border-white/[0.06] animate-scale-in">
-        <div className="absolute inset-0 bg-grid opacity-30" />
-        <div className="hidden lg:block absolute -top-40 -right-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl" />
-        <div className="hidden lg:block absolute -bottom-20 -left-20 w-60 h-60 bg-purple-500/10 rounded-full blur-3xl" />
-        
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
-                StudyAI Dashboard
+      {/* ── LEFT COLUMN ── */}
+      <div className="space-y-6 min-w-0">
+
+        {/* Greeting */}
+        <div className="animate-fade-in">
+          <h1 className="text-2xl font-bold text-white">
+            {greeting}, <span className="text-indigo-400">{firstName}</span>
+            {dsaProgress.total.done > 30 && (
+              <span className="ml-2 text-sm font-medium text-amber-400">
+                <Zap className="w-4 h-4 inline" /> On fire!
+              </span>
+            )}
+          </h1>
+          <p className="text-zinc-500 text-sm mt-0.5">{sub}</p>
+        </div>
+
+        {/* Quick stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-fade-in">
+          {[
+            { label: 'DSA Solved',   val: dsaProgress.total.done,     color: 'text-indigo-400', href: '/dsa'               },
+            { label: 'Flashcards',   val: `${flashcardProgress.known}/${flashcardProgress.total}`, color: 'text-violet-400', href: '/flashcards' },
+            { label: 'Applications', val: ivStats.total,              color: 'text-emerald-400', href: '/interview-tracker' },
+            { label: 'Offers',       val: ivStats.offer,              color: 'text-yellow-400',  href: '/interview-tracker' },
+          ].map(({ label, val, color, href }) => (
+            <Link key={label} to={href}>
+              <div className="glass rounded-xl p-4 hover:bg-zinc-800/60 transition-all">
+                <p className={`text-2xl font-bold ${color}`}>{val}</p>
+                <p className="text-zinc-500 text-xs mt-0.5">{label}</p>
               </div>
-              {stats?.completionRate >= 80 && (
-                <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium flex items-center gap-1">
-                  <Zap className="w-3 h-3" /> On Fire!
-                </div>
-              )}
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              Welcome back, <span className="gradient-text">{name.split(' ')[0]}</span>
-            </h1>
-            <p className="text-gray-400 text-lg max-w-xl">
-              You&apos;ve completed <span className="text-white font-semibold">{stats?.completed}</span> of <span className="text-white font-semibold">{stats?.totalTopics}</span> topics across <span className="text-white font-semibold">{stats?.totalSubjects}</span> subjects.
-            </p>
-          </div>
+            </Link>
+          ))}
+        </div>
 
-          <div className="flex flex-col items-center">
-            <div className="transform scale-75 sm:scale-90 md:scale-100">
-              <ProgressRing progress={stats?.completionRate || 0} size={110} strokeWidth={7} color="#818cf8" />
-            </div>
-            <span className="text-gray-500 text-xs mt-2 font-medium">Overall Progress</span>
+        {/* Explore Popular Topics */}
+        <div className="animate-fade-in">
+          <h2 className="text-sm font-semibold text-zinc-400 mb-3 flex items-center gap-2">
+            <Target className="w-4 h-4" /> Explore Popular Topics
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {exploreCards.map(({ label, desc, icon: Icon, href, color, bg }) => (
+              <Link key={label} to={href}>
+                <div className="glass rounded-xl p-4 flex items-center gap-4 hover:bg-zinc-800/70 transition-all group">
+                  <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className={`w-6 h-6 ${color}`} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-white font-semibold text-sm">{label}</p>
+                    <p className="text-zinc-500 text-xs mt-0.5 truncate">{desc}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map(card => (
-          <StatCard key={card.label} {...card} />
-        ))}
-      </div>
-
-      {/* ── Main Grid ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* ── Subject Progress ── */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Subject Progress</h2>
-            <Link href="/subjects" className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
-              View all <ArrowRight className="w-3 h-3" />
+        {/* Flashcards banner */}
+        <div className="glass rounded-xl p-5 border border-indigo-500/10 animate-fade-in">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <p className="text-xs text-indigo-400 font-semibold uppercase tracking-wider mb-1">Flashcards</p>
+              <h3 className="text-white font-bold text-base">Quick-fire concept revision</h3>
+              <p className="text-zinc-500 text-sm mt-0.5">OS · DBMS · CN · System Design — flip & master</p>
+            </div>
+            <Link to="/flashcards"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-all">
+              Start Revision <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
+        </div>
 
-          {subjectProgress.length === 0 ? (
-            <Card className="text-center py-12">
-              <GraduationCap className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-300">No subjects yet</h3>
-              <p className="text-gray-500 text-sm mt-1">Add your first subject to start tracking progress</p>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {subjectProgress.slice(0, 5).map((subject, idx) => (
-                <Link key={subject.id} href={`/subjects/${subject.id}`}>
-                  <div className={`glass rounded-2xl p-4 glass-hover animate-fade-in-up delay-${(idx + 1) * 100}`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-600/20 flex items-center justify-center">
-                          <BookOpen className="w-4 h-4 text-indigo-400" />
-                        </div>
-                        <div>
-                          <h3 className="text-white font-medium text-sm">{subject.name}</h3>
-                          <p className="text-gray-500 text-xs">{subject.completedCount}/{subject.topicCount} topics</p>
-                        </div>
-                      </div>
-                      <span className="text-sm font-semibold text-white">{subject.progress}%</span>
-                    </div>
-                    {/* Progress bar */}
-                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000"
-                        style={{ width: `${subject.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                </Link>
+        {/* Interview pipeline */}
+        {ivStats.total > 0 && (
+          <div className="animate-fade-in">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-zinc-400 flex items-center gap-2">
+                <Briefcase className="w-4 h-4" /> Interview Pipeline
+              </h2>
+              <Link to="/interview-tracker" className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                View all <ChevronRight className="w-3 h-3" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: 'Applied',   val: ivStats.applied,   color: 'text-blue-400',   bg: 'bg-blue-500/10'   },
+                { label: 'Interview', val: ivStats.interview, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+                { label: 'Offer',     val: ivStats.offer,     color: 'text-green-400',  bg: 'bg-green-500/10'  },
+                { label: 'Rejected',  val: ivStats.rejected,  color: 'text-red-400',    bg: 'bg-red-500/10'    },
+              ].map(({ label, val, color, bg }) => (
+                <div key={label} className={`glass rounded-xl p-3 text-center ${bg}`}>
+                  <p className={`text-xl font-bold ${color}`}>{val}</p>
+                  <p className="text-zinc-600 text-xs mt-0.5">{label}</p>
+                </div>
               ))}
             </div>
+          </div>
+        )}
+
+      </div>
+
+      {/* ── RIGHT PANEL ── */}
+      <div className="space-y-5">
+
+        {/* DSA Progress */}
+        <div className="glass rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white">DSA Progress</h3>
+            <Link to="/dsa" className="text-xs text-indigo-400 hover:text-indigo-300">View →</Link>
+          </div>
+          <div className="flex justify-center mb-4">
+            <DSARing {...dsaProgress} size={110} sw={9} />
+          </div>
+          <div className="space-y-2.5">
+            {[
+              { label: 'Easy',   color: '#22c55e', ...dsaProgress.basic },
+              { label: 'Medium', color: '#eab308', ...dsaProgress.core  },
+              { label: 'Hard',   color: '#ef4444', ...dsaProgress.pro   },
+            ].map(({ label, color, done, total }) => (
+              <div key={label} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+                  <span className="text-zinc-400 text-xs">{label}</span>
+                </div>
+                <span className="text-zinc-300 text-xs font-semibold">{done} / {total}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Problem of the Day */}
+        <div className="glass rounded-xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-400" /> Problem of the Day
+            </h3>
+          </div>
+          {potd ? (
+            <>
+              <p className="text-white text-sm font-medium mb-1">{potd.title}</p>
+              <p className="text-zinc-500 text-xs mb-3">{potd.patternName}</p>
+              <div className="flex gap-2">
+                <a href={potd.leetcode} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 text-center py-2 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-semibold border border-orange-500/20 hover:bg-orange-500/20 transition-all">
+                  LeetCode
+                </a>
+                <a href={potd.gfg} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 text-center py-2 rounded-lg bg-green-500/10 text-green-400 text-xs font-semibold border border-green-500/20 hover:bg-green-500/20 transition-all">
+                  GFG
+                </a>
+              </div>
+            </>
+          ) : (
+            <p className="text-green-400 text-sm font-semibold">🎉 All problems solved!</p>
           )}
         </div>
 
-        {/* ── Right Column ── */}
-        <div className="space-y-6">
-
-          {/* Quick Actions */}
-          <div>
-            <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {quickActions.map(({ label, desc, icon: Icon, href, color }, idx) => (
-                <Link key={label} href={href}>
-                  <div className={`glass rounded-2xl p-4 glass-hover h-full animate-fade-in-up delay-${(idx + 1) * 100}`}>
-                    <div className="space-y-3">
-                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${color} p-2`}>
-                        <Icon className="w-full h-full text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-white text-sm font-medium">{label}</h3>
-                        <p className="text-gray-500 text-xs mt-0.5">{desc}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+        {/* Daily Planner */}
+        <div className="glass rounded-xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-indigo-400" /> Daily Planner
+            </h3>
+            <Link to="/flashcards" className="text-xs text-indigo-400 hover:text-indigo-300">Study now →</Link>
           </div>
-
-          {/* Revision Overview */}
-          <Card>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-white">Revision Progress</h2>
-              <Link href="/revision">
-                <ArrowRight className="w-4 h-4 text-gray-500 hover:text-white transition-colors cursor-pointer" />
-              </Link>
-            </div>
-            {[1, 2, 3].map(rev => {
-              const completed = rev === 1 ? stats?.r1 : rev === 2 ? stats?.r2 : stats?.r3
-              const total = stats?.totalTopics || 1
-              const pct = Math.round((completed / total) * 100)
-              const colors = ['from-blue-500 to-cyan-500', 'from-purple-500 to-pink-500', 'from-emerald-500 to-teal-500']
-              return (
-                <div key={rev} className="mb-3 last:mb-0">
-                  <div className="flex items-center justify-between text-sm mb-1.5">
-                    <span className="text-gray-400">Revision {rev}</span>
-                    <span className="text-gray-300 font-medium">{completed}/{stats?.totalTopics}</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full bg-gradient-to-r ${colors[rev - 1]} transition-all duration-1000`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
+          <div className="space-y-1.5">
+            {[
+              { label: 'OS Flashcards',     href: '/flashcards' },
+              { label: 'DBMS Flashcards',   href: '/flashcards' },
+              { label: 'CN Flashcards',     href: '/flashcards' },
+              { label: 'System Design',     href: '/flashcards' },
+            ].map(({ label, href }) => (
+              <Link key={label} to={href}>
+                <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-800/60 transition-all">
+                  <Circle className="w-3.5 h-3.5 text-zinc-700 flex-shrink-0" />
+                  <p className="text-zinc-400 text-xs">{label}</p>
                 </div>
-              )
-            })}
-          </Card>
-
-          {/* AI Tip */}
-          <Card className="relative overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br from-amber-500/10 to-pink-500/10 rounded-full blur-xl" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <h3 className="text-white text-sm font-semibold">AI Study Tip</h3>
-              </div>
-              <p className="text-gray-400 text-xs leading-relaxed">
-                Try the Pomodoro technique: 25 min focused study, 5 min break. Your brain retains more with short, intense sessions.
-              </p>
-              <Link href="/assistant" className="mt-3 inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
-                Ask AI for more tips <ArrowRight className="w-3 h-3" />
               </Link>
-            </div>
-          </Card>
+            ))}
+          </div>
         </div>
+
       </div>
-
-      {/* ── Recent Activity ── */}
-      {recentTopics.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold text-white mb-4">Recent Topics</h2>
-          <Card>
-            <div className="divide-y divide-white/[0.04]">
-              {recentTopics.map((topic, idx) => (
-                <div key={topic.id} className={`flex items-center justify-between py-3 first:pt-0 last:pb-0 animate-fade-in-up delay-${(idx + 1) * 100}`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      topic.status === 'completed' ? 'bg-emerald-400' :
-                      topic.status === 'in_progress' ? 'bg-amber-400' : 'bg-gray-500'
-                    }`} />
-                    <div>
-                      <p className="text-white text-sm font-medium">{topic.name}</p>
-                      <p className="text-gray-500 text-xs">{topic.subject?.name}</p>
-                    </div>
-                  </div>
-                  <Badge variant={
-                    topic.status === 'completed' ? 'success' :
-                    topic.status === 'in_progress' ? 'warning' : 'default'
-                  }>
-                    {topic.status === 'in_progress' ? 'In Progress' : topic.status.charAt(0).toUpperCase() + topic.status.slice(1)}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-      )}
     </div>
   )
 }

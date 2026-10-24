@@ -1,21 +1,22 @@
-'use client'
 import { cn } from '@/utils/helpers'
 
 export function Input({ label, error, className, ...props }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       {label && (
-        <label className="block text-sm font-medium text-gray-300">{label}</label>
+        <label className="block text-sm font-semibold text-zinc-200">{label}</label>
       )}
       <input
         className={cn(
-          'w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all',
-          error && 'border-red-500/50 focus:ring-red-500/50',
+          'w-full px-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl',
+          'text-white font-medium placeholder-zinc-500 text-sm',
+          'focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all',
+          error && 'border-red-600 focus:ring-red-500/40',
           className
         )}
         {...props}
       />
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-xs font-medium text-red-400">{error}</p>}
     </div>
   )
 }

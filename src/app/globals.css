@@ -1,281 +1,205 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────
+   StudyAI — Dark theme with high-contrast, clearly readable text
+   Background: near-black  |  Text: crisp white hierarchy
+   ───────────────────────────────────────────────────────────── */
+
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --accent: #6366f1;
-  --accent2: #a855f7;
+  --background: #09090b;   /* zinc-950 — rich dark, not pure black */
+  --surface:    #18181b;   /* zinc-900 — card/panel surface        */
+  --surface-2:  #27272a;   /* zinc-800 — secondary surface         */
+  --border:     #3f3f46;   /* zinc-700 — visible border            */
+  --text-1:     #fafafa;   /* zinc-50  — primary text (bright)     */
+  --text-2:     #d4d4d8;   /* zinc-300 — secondary text            */
+  --text-3:     #a1a1aa;   /* zinc-400 — muted / placeholder       */
+  --accent:     #818cf8;   /* indigo-400 — accent                  */
+}
+
+/* ── Base reset ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-1);
   font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  font-size: 15px;
 }
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 4px; }
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
 
-/* ── Glass utility ── */
+/* ─────────────────────────────────────────────────────────────
+   CONTRAST OVERRIDES
+   Tailwind's gray-* classes are designed for light backgrounds.
+   On a dark background, gray-400/500/600 are too dim to read.
+   These overrides ensure every gray text class renders at a
+   minimum contrast ratio that passes WCAG AA (4.5:1).
+   ───────────────────────────────────────────────────────────── */
+
+/* Primary text — pure white, full weight */
+.text-white    { color: #fafafa !important; }
+.text-gray-100 { color: #f4f4f5 !important; }
+.text-gray-200 { color: #e4e4e7 !important; }
+.text-gray-300 { color: #d4d4d8 !important; font-weight: 500; }
+
+/* Secondary / body text — light enough to read comfortably */
+.text-gray-400 { color: #c4c4c8 !important; font-weight: 500; }
+.text-gray-500 { color: #b4b4b8 !important; font-weight: 500; }
+
+/* Muted text — still legible, not invisible */
+.text-gray-600 { color: #a1a1aa !important; font-weight: 500; }
+.text-gray-700 { color: #94949e !important; font-weight: 500; }
+
+/* Headings — always crisp white and bold */
+h1, h2, h3, h4, h5, h6 {
+  color: #fafafa;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Paragraph text — never dimmer than zinc-300 */
+p {
+  color: #d4d4d8;
+  font-weight: 450;
+}
+
+/* Labels */
+label {
+  color: #e4e4e7;
+  font-weight: 500;
+}
+
+/* Input text always crisp */
+input, textarea, select {
+  color: #fafafa !important;
+  font-weight: 500;
+}
+
+/* ── Glass utility (used by Card.js) ─────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(24, 24, 27, 0.95);
+  border: 1px solid var(--border);
+  border-radius: 16px;
 }
 
 .glass-hover {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.3s ease;
+  background: rgba(24, 24, 27, 0.95);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.2s ease;
 }
 .glass-hover:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+  background: rgba(39, 39, 42, 0.98);
+  border-color: #52525b;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-/* ── Gradient text ── */
+/* ── Gradient text (used sparingly) ──────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #818cf8, #c084fc);
+  background: linear-gradient(135deg, #a5b4fc, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-weight: 700;
 }
 
-.gradient-text-accent {
-  background: linear-gradient(135deg, #6366f1, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ── Animations ── */
+/* ── Animations ───────────────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.1); }
-  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.25); }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes blob {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  33%  { transform: translate(30px, -50px) scale(1.1); }
+  66%  { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
 }
-@keyframes borderGlow {
-  0%, 100% { border-color: rgba(99, 102, 241, 0.15); }
-  50% { border-color: rgba(99, 102, 241, 0.4); }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.animate-fade-in { animation: fadeIn 0.5s ease-out both; }
-.animate-fade-in-up { animation: fadeInUp 0.6s ease-out both; }
-.animate-scale-in { animation: scaleIn 0.4s ease-out both; }
-.animate-slide-right { animation: slideInRight 0.5s ease-out both; }
-.animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
-.animate-border-glow { animation: borderGlow 3s ease-in-out infinite; }
-.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-fade-in     { animation: fadeIn 0.4s ease-out both; }
+.animate-fade-in-up  { animation: fadeInUp 0.5s ease-out both; }
+/* Blobs are large blurred layers — keep them on the compositor */
+.animate-blob        { animation: blob 7s ease-in-out infinite; will-change: transform; }
+.animate-blob-delay  { animation: blob 7s ease-in-out 2s infinite; will-change: transform; }
+.animate-scroll      { animation: scroll 40s linear infinite; }
+.animate-bounce      { animation: bounce 1s infinite; }
 
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
 
-/* ── Shimmer loading ── */
+/* ── Shimmer skeleton loader ─────────────────────────────── */
 .shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 2s ease-in-out infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
-/* ── Ring progress ── */
-.ring-progress {
-  transform: rotate(-90deg);
-}
-.ring-progress circle {
-  transition: stroke-dashoffset 1.5s ease-in-out;
-}
-
-/* ── Grid pattern background ── */
+/* ── Grid background ─────────────────────────────────────── */
 .bg-grid {
   background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-/* ── Animated mesh gradient ── */
+/* ── Mesh gradient (landing page) ───────────────────────── */
 .mesh-bg {
-  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.15), transparent),
-              radial-gradient(ellipse 50% 50% at 80% 20%, rgba(168,85,247,0.1), transparent),
-              radial-gradient(ellipse 50% 50% at 20% 40%, rgba(236,72,153,0.08), transparent),
-              radial-gradient(ellipse 50% 50% at 30% 80%, rgba(99,102,241,0.06), transparent),
-              radial-gradient(ellipse 50% 50% at 70% 70%, rgba(168,85,247,0.06), transparent);
-  background-color: #000;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.12), transparent),
+    radial-gradient(ellipse 50% 50% at 80% 20%,  rgba(168,85,247,0.08), transparent),
+    radial-gradient(ellipse 50% 50% at 20% 40%,  rgba(236,72,153,0.06), transparent);
+  background-color: #09090b;
 }
 
-@keyframes morph {
-  0% { border-radius: 60% 40% 30% 70%/60% 30% 70% 40%; }
-  50% { border-radius: 30% 60% 70% 40%/50% 60% 30% 60%; }
-  100% { border-radius: 60% 40% 30% 70%/60% 30% 70% 40%; }
+/* ── Border glow animation ───────────────────────────────── */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(99,102,241,0.2); }
+  50%       { border-color: rgba(99,102,241,0.5); }
 }
+.animate-border-glow { animation: borderGlow 3s ease-in-out infinite; }
 
-.animate-morph {
-  animation: morph 8s ease-in-out infinite;
-}
-
-@keyframes blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0px, 0px) scale(1); }
-}
-
-.animate-blob {
-  animation: blob 7s ease-in-out infinite;
-}
-.animate-blob-delay {
-  animation: blob 7s ease-in-out 2s infinite;
-}
-
-/* ── Gradient border card ── */
-.gradient-border {
-  position: relative;
-}
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.1), transparent, transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* ── Smooth scroll ── */
-html {
-  scroll-behavior: smooth;
-}
-
-/* ── FAQ ── */
-.faq-open {
-  grid-template-rows: 1fr;
-}
-
-/* ── Testimonial shimmer animation ── */
-@keyframes testimonial-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.animate-scroll {
-  animation: testimonial-scroll 40s linear infinite;
-}
-
-/* ── Gradient outline button ── */
-.btn-gradient-outline {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-.btn-gradient-outline::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* ── Responsive base (no media queries) ── */
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  /* fluid type */
-  font-size: clamp(14px, 1.2vw + 12px, 18px);
-  --site-max-width: 1200px;
-  --gutter: clamp(12px, 2vw, 32px);
-}
-
-/* Container that stays centered and scales with viewport */
+/* ── Responsive container ────────────────────────────────── */
 .container {
-  width: min(var(--site-max-width), 100%);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--gutter);
-  padding-right: var(--gutter);
+  width: min(1200px, 100%);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 2vw, 32px);
 }
 
-/* Fluid typography utilities */
-.fluid-h1 { font-size: clamp(1.6rem, 4vw, 3rem); line-height: 1.05; }
-.fluid-h2 { font-size: clamp(1.35rem, 3vw, 2.25rem); line-height: 1.1; }
-.fluid-text { font-size: clamp(0.95rem, 1.4vw, 1.125rem); }
+img, video { max-width: 100%; height: auto; display: block; }
 
-/* Responsive grid that adapts column count automatically */
-.responsive-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: clamp(12px, 1.5vw, 24px);
+/* ── Reduced motion ──────────────────────────────────────── */
+/* Skip decorative infinite animations for users who opt out —
+   also saves battery/GPU on low-end devices that set this. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-blob, .animate-blob-delay, .animate-scroll,
+  .animate-border-glow, .shimmer { animation: none; }
 }
-
-/* Responsive flex helpers */
-.stack { display: flex; flex-direction: column; gap: clamp(8px, 1.2vw, 20px); }
-.row { display: flex; flex-wrap: wrap; gap: clamp(8px, 1.2vw, 20px); }
-
-/* Images and media scale fluidly */
-img, video, picture { max-width: 100%; height: auto; display: block; object-fit: cover; }
-
-/* Buttons & form controls scale with viewport */
-.btn, button, .input {
-  font-size: inherit;
-  padding: clamp(8px, 1.2vw, 14px) clamp(12px, 2vw, 20px);
-}
-
-/* Full-bleed utility without media queries */
-.full-bleed { width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
-
-/* Prevent overflow from long words */
-.break-words { overflow-wrap: break-word; word-break: break-word; }
-
-/* Touch-friendly minimum target */
-.touch-target { min-height: clamp(40px, 6vh, 56px); }
-
-/* Lightweight responsive spacing helpers */
-.gutter-x { padding-left: var(--gutter); padding-right: var(--gutter); }
-.space-y { gap: clamp(8px, 1.2vw, 20px); }
-
-/* Use responsive utilities in components: examples
-   - Use .container to wrap page content
-   - Use .responsive-grid to replace fixed-column grids
-   - Use .fluid-h1/.fluid-text for scalable typography
-*/

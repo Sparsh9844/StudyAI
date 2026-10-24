@@ -1,4 +1,3 @@
-'use client'
 import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/utils/helpers'
 import { Check, ChevronDown } from 'lucide-react'
@@ -40,7 +39,7 @@ export function MultiSelect({ label, options, value, onChange, placeholder = 'Se
       </button>
       {error && <p className="text-sm text-red-400">{error}</p>}
       {open && (
-        <div className="absolute z-20 mt-1 w-full bg-gray-900 border border-white/10 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
+        <div className="absolute z-20 mt-1 w-full bg-gray-900 border border-white/10 rounded-xl shadow-2xl shadow-black/40 overflow-hidden max-h-56 overflow-y-auto">
           {options.length === 0 ? (
             <p className="p-4 text-gray-500 text-sm text-center">No subjects available</p>
           ) : (

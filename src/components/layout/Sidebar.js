@@ -1,114 +1,201 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/utils/helpers";
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { cn } from '@/utils/helpers'
 import {
-  LayoutDashboard,
-  BookOpen,
-  CalendarRange,
-  RefreshCw,
-  BarChart3,
-  Bot,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
-import { signOut } from "@/services/auth";
-import { useRouter } from "next/navigation";
+  LayoutDashboard, BookOpen, RefreshCw,
+  Bot, Code2, Brain, Cpu, LogOut, GraduationCap,
+  ChevronUp, ChevronDown,
+  Calculator, MessageSquare, Lightbulb, Target,
+  Briefcase, Layers,
+} from 'lucide-react'
+import { signOut } from '@/services/auth'
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/subjects", label: "Subjects", icon: BookOpen },
-  { href: "/study-plan", label: "Study Plan", icon: CalendarRange },
-  { href: "/revision", label: "Revision", icon: RefreshCw },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/assistant", label: "AI Assistant", icon: Bot },
-];
+// ── Nav structure ─────────────────────────────────────────────
+// type: 'link'   → plain nav item
+// type: 'group'  → collapsible group with children
+//   children: array of 'link' or nested 'group'
+const NAV = [
+  {
+    sectionLabel: 'General',
+    items: [
+      { type: 'link', href: '/dashboard',         label: 'Dashboard',         icon: LayoutDashboard },
+      { type: 'link', href: '/prep-hub',          label: 'Prep Hub',          icon: Target          },
+      { type: 'link', href: '/interview-tracker', label: 'Interview Tracker', icon: Briefcase       },
+      { type: 'link', href: '/flashcards',        label: 'Flashcards',        icon: Layers          },
+    ],
+  },
+  {
+    sectionLabel: 'Practice',
+    items: [
+      {
+        type: 'group',
+        label: 'Practice',
+        icon: Code2,
+        id: 'practice',
+        children: [
+          { type: 'link', href: '/dsa',      label: 'DSA Sheet',    icon: Code2 },
+          { type: 'link', href: '/core-cs',  label: 'Core CS',      icon: Cpu },
+          {
+            type: 'group',
+            label: 'Aptitude',
+            icon: Brain,
+            id: 'aptitude',
+            children: [
+              { type: 'link', href: '/aptitude?section=arithmetic',        label: 'Quantitative', icon: Calculator },
+              { type: 'link', href: '/aptitude?section=logical',           label: 'Logical',      icon: Lightbulb },
+              { type: 'link', href: '/aptitude?section=verbal',            label: 'Verbal',       icon: MessageSquare },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    sectionLabel: 'Tools',
+    items: [
+      { type: 'link', href: '/assistant', label: 'Sage', icon: Bot },
+    ],
+  },
+]
 
-export function Sidebar() {
-  const pathname = usePathname();
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/auth/login");
-  };
+// ── Single flat link ───────────────────────────────────────────
+function NavLink({ href, label, icon: Icon, depth = 0 }) {
+  const pathname = useLocation().pathname
+  const active = pathname === href || pathname === href.split('?')[0]
 
   return (
-    <aside
-      className="
-hidden md:flex
-fixed left-0 top-0
-h-screen w-64
-bg-black/60
-backdrop-blur-2xl
-border-r border-white/[0.04]
-p-5
-flex-col
-z-40
-"
+    <Link
+      to={href}
+      className={cn(
+        'flex items-center gap-2.5 py-2 pr-3 rounded-lg text-sm transition-all duration-150 w-full',
+        depth === 0 ? 'pl-3' : depth === 1 ? 'pl-4' : 'pl-5',
+        active
+          ? 'bg-indigo-600/15 text-white font-semibold'
+          : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60 font-medium'
+      )}
     >
-      {/* Logo */}
-      <Link href="/dashboard" className="flex items-center gap-3 mb-10 group">
-        <div className="relative">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div>
-        <div>
-          <h1 className="text-white font-bold text-lg tracking-tight">
-            StudyAI
-          </h1>
-          <p className="text-gray-600 text-[11px] font-medium tracking-wider uppercase">
-            Smart Study Planner
-          </p>
-        </div>
-      </Link>
+      <Icon className={cn('w-4 h-4 flex-shrink-0', active ? 'text-indigo-400' : 'text-zinc-500')} />
+      <span>{label}</span>
+      {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0" />}
+    </Link>
+  )
+}
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1">
-        {navItems.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname?.startsWith(href + "/");
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 relative group",
-                active ? "text-white" : "text-gray-500 hover:text-gray-300",
-              )}
-            >
-              {active && (
-                <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border border-indigo-500/15" />
-              )}
-              <Icon
-                className={cn(
-                  "w-4 h-4 relative z-10 transition-colors",
-                  active ? "text-indigo-400" : "group-hover:text-indigo-400",
-                )}
-              />
-              <span className="relative z-10">{label}</span>
-              {active && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-lg shadow-indigo-400/50" />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+// ── Collapsible group ──────────────────────────────────────────
+function NavGroup({ item, depth = 0, defaultOpen = true }) {
+  const pathname = useLocation().pathname
+  const [open, setOpen] = useState(defaultOpen)
 
-      {/* Sign Out */}
+  // Auto-open if any child is active
+  const isChildActive = (children) =>
+    children?.some(c =>
+      c.type === 'link'
+        ? pathname === c.href || pathname === c.href.split('?')[0]
+        : isChildActive(c.children)
+    )
+
+  const hasActive = isChildActive(item.children)
+  const Icon = item.icon
+
+  return (
+    <div>
+      {/* Group header button */}
       <button
-        onClick={handleSignOut}
-        className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-gray-300 hover:bg-white/[0.03] transition-all group"
+        onClick={() => setOpen(v => !v)}
+        className={cn(
+          'flex items-center gap-2.5 w-full py-2 pr-3 rounded-lg text-sm transition-all duration-150',
+          depth === 0 ? 'pl-3' : depth === 1 ? 'pl-4' : 'pl-5',
+          hasActive
+            ? 'text-indigo-300 font-semibold'
+            : 'text-zinc-400 hover:text-white font-medium'
+        )}
       >
-        <LogOut className="w-4 h-4 group-hover:text-red-400 transition-colors" />
-        Sign Out
+        <Icon className={cn('w-4 h-4 flex-shrink-0', hasActive ? 'text-indigo-400' : 'text-zinc-500')} />
+        <span className="flex-1 text-left">{item.label}</span>
+        {open
+          ? <ChevronUp className="w-3.5 h-3.5 text-zinc-600" />
+          : <ChevronDown className="w-3.5 h-3.5 text-zinc-600" />
+        }
       </button>
 
-      {/* Bottom decoration */}
-      <div className="mt-4 pt-4 border-t border-white/[0.04]">
-        <p className="text-[11px] text-gray-600 text-center">StudyAI v1.0</p>
+      {/* Children with tree line */}
+      {open && (
+        <div className={cn('relative mt-0.5', depth === 0 ? 'ml-[22px]' : 'ml-[22px]')}>
+          {/* Vertical tree line */}
+          <span className="absolute left-0 top-1 bottom-3 w-px bg-zinc-800" />
+          <div className="space-y-0.5">
+            {item.children.map((child, idx) => (
+              <div key={child.href || child.id || idx} className="relative pl-4">
+                {/* Horizontal connector tick */}
+                <span className="absolute left-0 top-[17px] w-3 h-px bg-zinc-800" />
+                {child.type === 'link'
+                  ? <NavLink {...child} depth={depth + 1} />
+                  : <NavGroup item={child} depth={depth + 1} defaultOpen={false} />
+                }
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Sidebar ────────────────────────────────────────────────────
+export function Sidebar() {
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/auth/login', { replace: true })
+  }
+
+  return (
+    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-60 bg-zinc-950 border-r border-zinc-800/60 flex-col z-40 overflow-y-auto">
+
+      {/* Logo */}
+      <div className="px-4 py-5 border-b border-zinc-800/60">
+        <Link to="/dashboard" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
+            <GraduationCap className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-white leading-none">StudyAI</p>
+            <p className="text-[10px] text-zinc-500 mt-0.5 tracking-wide">Smart Planner</p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Nav sections */}
+      <nav className="flex-1 px-3 py-4 space-y-5">
+        {NAV.map(section => (
+          <div key={section.sectionLabel}>
+            {/* Section label */}
+            <p className="px-3 mb-1.5 text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">
+              {section.sectionLabel}
+            </p>
+            <div className="space-y-0.5">
+              {section.items.map((item, idx) =>
+                item.type === 'link'
+                  ? <NavLink key={item.href} {...item} depth={0} />
+                  : <NavGroup key={item.id || idx} item={item} depth={0} defaultOpen={true} />
+              )}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      {/* Sign out */}
+      <div className="px-3 py-4 border-t border-zinc-800/60">
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-sm font-medium text-zinc-500 hover:bg-red-950/40 hover:text-red-400 transition-all"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </button>
+        <p className="text-[10px] text-zinc-800 text-center mt-3">StudyAI v1.0</p>
       </div>
     </aside>
-  );
+  )
 }
