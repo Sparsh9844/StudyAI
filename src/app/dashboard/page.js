@@ -7,6 +7,7 @@ import {
   Circle, CheckCircle2, Layers,
 } from 'lucide-react'
 import { allProblems } from '@/data/dsaSheet'
+import { userStorage } from '@/lib/userStorage'
 
 // ── Time-based greeting ───────────────────────────────────────
 function getGreeting() {
@@ -21,7 +22,7 @@ function getGreeting() {
 // ── DSA progress from localStorage ───────────────────────────
 function getDSAProgress() {
   try {
-    const solved = JSON.parse(localStorage.getItem('dsa-sheet-solved') || '{}')
+    const solved = JSON.parse(userStorage.getItem('dsa-sheet-solved') || '{}')
     const basic  = allProblems.filter(p => p.difficulty === 'Easy')
     const core   = allProblems.filter(p => p.difficulty === 'Medium')
     const pro    = allProblems.filter(p => p.difficulty === 'Hard')
@@ -39,7 +40,7 @@ function getDSAProgress() {
 // ── Problem of the Day ────────────────────────────────────────
 function getProblemOfDay() {
   try {
-    const solved  = JSON.parse(localStorage.getItem('dsa-sheet-solved') || '{}')
+    const solved  = JSON.parse(userStorage.getItem('dsa-sheet-solved') || '{}')
     const unsolved = allProblems.filter(p => !solved[p.id])
     if (!unsolved.length) return null
     return unsolved[new Date().getDate() % unsolved.length]
@@ -49,7 +50,7 @@ function getProblemOfDay() {
 // ── Interview tracker stats from localStorage ─────────────────
 function getInterviewStats() {
   try {
-    const entries = JSON.parse(localStorage.getItem('studyai-interview-tracker') || '[]')
+    const entries = JSON.parse(userStorage.getItem('studyai-interview-tracker') || '[]')
     return {
       total:     entries.length,
       applied:   entries.filter(e => e.status === 'applied').length,
@@ -92,9 +93,11 @@ export default function DashboardPage() {
   // AppShell only renders this page once auth has resolved
   const { user, loading } = useAuth()
 
-  const dsaProgress    = useMemo(() => getDSAProgress(), [])
-  const potd           = useMemo(() => getProblemOfDay(), [])
-  const ivStats        = useMemo(() => getInterviewStats(), [])
+  // Progress is stored per account — recompute when the user changes
+  const userId = user?.id
+  const dsaProgress    = useMemo(() => getDSAProgress(), [userId])
+  const potd           = useMemo(() => getProblemOfDay(), [userId])
+  const ivStats        = useMemo(() => getInterviewStats(), [userId])
   const [greeting, sub] = getGreeting()
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]
                  || user?.email?.split('@')[0]
@@ -103,12 +106,12 @@ export default function DashboardPage() {
   // Flashcard progress
   const flashcardProgress = useMemo(() => {
     try {
-      const p = JSON.parse(localStorage.getItem('studyai-flashcards') || '{}')
+      const p = JSON.parse(userStorage.getItem('studyai-flashcards') || '{}')
       const known = Object.values(p).filter(v => v === 'known').length
       const total = 48 // 4 decks × 12 cards
       return { known, total }
     } catch { return { known: 0, total: 48 } }
-  }, [])
+  }, [userId])
 
   const exploreCards = [
     { label: 'DSA Sheet',         desc: `${dsaProgress.total.done}/${allProblems.length} solved`,  icon: Code2,     href: '/dsa',               color: 'text-indigo-400',  bg: 'bg-indigo-500/10'  },

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { coreSubjects, allCoreTopics, tagVariant } from '@/data/coreCS'
+import { userStorage } from '@/lib/userStorage'
 
 const STORAGE_KEY = 'core-cs-done'
 
@@ -16,12 +17,12 @@ const SUBJECT_ICON = { dbms: Database, os: Monitor, cn: Network }
 
 function loadDone() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = userStorage.getItem(STORAGE_KEY)
     return raw ? JSON.parse(raw) : {}
   } catch { return {} }
 }
 function saveDone(done) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(done)) } catch { /* ignore */ }
+  try { userStorage.setItem(STORAGE_KEY, JSON.stringify(done)) } catch { /* ignore */ }
 }
 
 export default function CoreCSPage() {

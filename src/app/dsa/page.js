@@ -18,6 +18,7 @@ import {
   patternMeta,
   difficultyVariant,
 } from '@/data/dsaSheet'
+import { userStorage } from '@/lib/userStorage'
 
 const STORAGE_KEY = 'dsa-sheet-solved'
 const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
@@ -36,7 +37,7 @@ export default function DsaPage() {
   useEffect(() => {
     let next = {}
     try {
-      const raw = localStorage.getItem(STORAGE_KEY)
+      const raw = userStorage.getItem(STORAGE_KEY)
       if (raw) next = JSON.parse(raw)
     } catch {
       next = {}
@@ -47,7 +48,7 @@ export default function DsaPage() {
   const persist = (next) => {
     setSolved(next)
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      userStorage.setItem(STORAGE_KEY, JSON.stringify(next))
     } catch {
       /* storage might be unavailable; ignore */
     }

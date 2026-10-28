@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Providers } from './components/layout/Providers'
 import { AppShell } from './components/layout/AppShell'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { loadDashboard } from './lib/preload'
 
 // ── Eager (needed immediately on every load) ─────────────────
 import Landing from './app/page'
@@ -14,7 +15,7 @@ import Register from './app/auth/register/page'
 // downloads a chunk when the user actually visits that route.
 const ForgotPassword = lazy(() => import('./app/auth/forgot-password/page'))
 const ResetPassword  = lazy(() => import('./app/auth/reset-password/page'))
-const Dashboard    = lazy(() => import('./app/dashboard/page'))
+const Dashboard    = lazy(loadDashboard)
 const PrepHub      = lazy(() => import('./app/prep-hub/page'))
 const Flashcards   = lazy(() => import('./app/flashcards/page'))
 const InterviewTracker = lazy(() => import('./app/interview-tracker/page'))
