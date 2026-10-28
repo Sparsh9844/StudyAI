@@ -8,6 +8,7 @@ import {
 import { dsaPatterns, allProblems } from '@/data/dsaSheet'
 import { coreSubjects, allCoreTopics } from '@/data/coreCS'
 import { aptitudeSections } from '@/data/aptitudeKit'
+import { userStorage } from '@/lib/userStorage'
 
 const TABS = [
   { id: 'dsa',      label: 'DSA',      icon: Code2  },
@@ -18,7 +19,7 @@ const TABS = [
 // ── DSA tab ───────────────────────────────────────────────────
 function DSATab() {
   const solved = (() => {
-    try { return JSON.parse(localStorage.getItem('dsa-sheet-solved') || '{}') } catch { return {} }
+    try { return JSON.parse(userStorage.getItem('dsa-sheet-solved') || '{}') } catch { return {} }
   })()
 
   const courses = [
@@ -98,7 +99,7 @@ function DSATab() {
 // ── Core CS tab ───────────────────────────────────────────────
 function CoreCSTab() {
   const done = (() => {
-    try { return JSON.parse(localStorage.getItem('core-cs-done') || '{}') } catch { return {} }
+    try { return JSON.parse(userStorage.getItem('core-cs-done') || '{}') } catch { return {} }
   })()
 
   const SUBJECT_ICON = { dbms: Database, os: Monitor, cn: Network }
@@ -155,7 +156,7 @@ function CoreCSTab() {
 // ── Aptitude tab ──────────────────────────────────────────────
 function AptitudeTab() {
   const answered = (() => {
-    try { return JSON.parse(localStorage.getItem('aptitude-kit-state') || '{}').answers || {} } catch { return {} }
+    try { return JSON.parse(userStorage.getItem('aptitude-kit-state') || '{}').answers || {} } catch { return {} }
   })()
 
   const SECTION_CONFIG = {

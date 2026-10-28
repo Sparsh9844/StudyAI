@@ -10,6 +10,7 @@ import {
   Trophy, XCircle, Clock, CheckCircle2, Loader,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { userStorage } from '@/lib/userStorage'
 
 const LS_KEY = 'studyai-interview-tracker'
 
@@ -24,10 +25,10 @@ const STATUSES = [
 const ROUNDS = ['Applied', 'OA', 'Tech Round 1', 'Tech Round 2', 'HR Round', 'Offer', 'Rejected']
 
 function loadEntries() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]') } catch { return [] }
+  try { return JSON.parse(userStorage.getItem(LS_KEY) || '[]') } catch { return [] }
 }
 function saveEntries(e) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(e)) } catch {}
+  try { userStorage.setItem(LS_KEY, JSON.stringify(e)) } catch {}
 }
 
 const EMPTY_FORM = { company: '', role: '', status: 'applied', date: '', round: 'Applied', notes: '', ctc: '', location: '' }

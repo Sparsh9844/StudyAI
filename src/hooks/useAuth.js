@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { loadSupabase } from '@/lib/supabase-lazy'
 import { authStorage, isRemembered } from '@/lib/consent'
+import { setStorageUser } from '@/lib/userStorage'
 import {
   hasServerSession, syncServerSession, clearServerSession, restoreServerSession,
 } from '@/services/session'
@@ -39,6 +40,9 @@ export function AuthProvider({ children }) {
   const [user, setUser]       = useState(readCachedUser)
   // Only block rendering when we have no cached answer yet
   const [loading, setLoading] = useState(() => user === null && !!safeHasStoredSession())
+
+  // Scope saved progress to whoever is signed in before any page reads it
+  setStorageUser(user?.id)
 
   useEffect(() => {
     let subscription

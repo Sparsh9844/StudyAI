@@ -7,14 +7,15 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { flashcardDecks, allFlashcards } from '@/data/flashcards'
+import { userStorage } from '@/lib/userStorage'
 
 const LS_KEY = 'studyai-flashcards'
 
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}') } catch { return {} }
+  try { return JSON.parse(userStorage.getItem(LS_KEY) || '{}') } catch { return {} }
 }
 function saveProgress(p) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(p)) } catch {}
+  try { userStorage.setItem(LS_KEY, JSON.stringify(p)) } catch {}
 }
 
 // ── Flip Card ────────────────────────────────────────────────

@@ -15,6 +15,7 @@ import {
   allAptitudeQuestions,
   sectionMeta,
 } from '@/data/aptitudeKit'
+import { userStorage } from '@/lib/userStorage'
 
 const STORAGE_KEY = 'aptitude-kit-state'
 
@@ -36,14 +37,14 @@ function SectionIcon({ name, className }) {
 // ── Loads / saves answered state from localStorage ────────────
 function loadState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = userStorage.getItem(STORAGE_KEY)
     return raw ? JSON.parse(raw) : { answers: {}, revealed: {} }
   } catch {
     return { answers: {}, revealed: {} }
   }
 }
 function saveState(state) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) } catch { /* ignore */ }
+  try { userStorage.setItem(STORAGE_KEY, JSON.stringify(state)) } catch { /* ignore */ }
 }
 
 // ── Single question card ──────────────────────────────────────
