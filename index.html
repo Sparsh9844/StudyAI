@@ -8,8 +8,8 @@
     <meta name="description" content="AI-powered study planner and revision tracker" />
 
     <!-- Preconnect to critical origins so DNS+TLS is resolved before JS fires -->
-    <!-- Supabase project URL -->
-    <link rel="preconnect" href="https://afcpjoqpeiaremypvpyq.supabase.co" crossorigin />
+    <!-- Supabase project URL — filled in from the environment at build time -->
+    <link rel="preconnect" href="%NEXT_PUBLIC_SUPABASE_URL%" crossorigin />
 
     <!-- Google Analytics — load async so it never blocks rendering -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6CP8SYQC77"></script>
