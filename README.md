@@ -1,55 +1,53 @@
-#Live Link
+# 📚 StudyAI (StudyFlow AI)
 
-https://study-ai-u1l3.vercel.app/
+**Live:** https://study-ai-mu-lime.vercel.app
 
-# 📚 StudyAI
-
-StudyAI is an AI-powered study management platform designed to help students organize their learning, track revision progress, and improve productivity. The application provides subject management, revision tracking (R1, R2, R3), progress analytics, and note-taking features through a modern and responsive interface.
+StudyAI is an AI-powered placement and interview prep platform. It brings together a pattern-wise DSA sheet, an aptitude kit for company tests, Core CS theory, flashcards and an interview tracker, plus **Sage**, an AI assistant that explains concepts, solves doubts and writes notes. Your progress is saved to your account, so you can pick up where you left off.
 
 ---
 
 ## ✨ Features
 
-* 🔐 Secure Authentication with email confirmation
-* 📖 Subject & Topic Management
-* ✅ Revision Tracking (R1, R2, R3)
-* 📊 Progress Analytics Dashboard
-* 📝 Notes Management
-* 📅 Study Planning & Tracking
-* 📱 Responsive Design
-* ☁️ Cloud Database with Supabase
+| Feature | What it does |
+|---|---|
+| 🧩 **DSA Sheet** | 71 problems across 9 patterns (Two Pointer, Sliding Window, Prefix Sum, Fast & Slow Pointers, Binary Search, Heap, Dynamic Programming, DFS/BFS, Backtracking), with LeetCode and GeeksforGeeks links, difficulty filters and search |
+| 🧮 **Aptitude Kit** | 82 questions with worked solutions across Quantitative, Logical Reasoning, Verbal Ability, Data Interpretation, Puzzles & Seating Arrangement and General Mental Ability, with accuracy tracking (TCS, Infosys, Wipro, Cognizant, Accenture style) |
+| 🖥️ **Core CS** | 39 interview-ready topics in DBMS, Operating Systems and Computer Networks, each with curated source links |
+| 🤖 **Sage AI** | AI assistant with **Chat**, **Doubts** (step-by-step solutions) and **Notes** (generate notes for any topic) modes, powered by Groq |
+| 🃏 **Flashcards** | 48 quick-fire cards in OS, DBMS, CN and System Design decks; flip, mark as known or review, shuffle |
+| 💼 **Interview Tracker** | Track every application from Applied → Online Assessment → Interview → Offer |
+| 🎯 **Prep Hub** | Structured learning paths that bring DSA, Core CS and Aptitude together |
+| 📊 **Dashboard** | DSA progress by difficulty, Problem of the Day, daily planner, flashcard and interview pipeline stats |
+| 🔐 **Accounts** | Supabase auth (sign up, login, password reset) with progress kept separately for each account |
 
 ---
 
 ## 🖼️ Screenshots
 
-### Landing Page
-
-![Landing Page](./Screenshots/landing_page.jpeg)
-
 ### Dashboard
+![Dashboard](./Screenshots/dashboard.jpg)
 
-![Dashboard](./Screenshots/dashboard.jpeg)
+### DSA Sheet
+![DSA Sheet](./Screenshots/dsa.jpg)
 
-### Subject Management
+### Aptitude Kit
+![Aptitude Kit](./Screenshots/aptitude.jpg)
 
-![Subject Page](./Screenshots/subject_page.jpeg)
+### Core CS
+![Core CS](./Screenshots/core-cs.jpg)
 
-### Revision Tracker
+### Sage AI Assistant
+![Sage AI](./Screenshots/assistant.jpg)
 
-![Revision Tracker](./Screenshots/Revision.jpeg)
+### Prep Hub
+![Prep Hub](./Screenshots/prep-hub.jpg)
 
-### Study Plan
+### Flashcards
+![Flashcards](./Screenshots/flashcards.jpg)
 
-![Study Plan](./Screenshots/study_plan.jpeg)
+### Landing Page
+![Landing Page](./Screenshots/landing.jpg)
 
-### Analytics
-
-![Analytics](./Screenshots/analytics.jpeg)
-
-### AI Features
-
-![AI Features](./Screenshots/AI.jpeg)
 ---
 
 ## 🚀 Tech Stack
@@ -57,9 +55,9 @@ StudyAI is an AI-powered study management platform designed to help students org
 * React 19 + Vite
 * React Router
 * Tailwind CSS
-* Express 5 (API server)
+* Express 5 (API server, deployed as a Vercel serverless function)
 * Supabase (Auth + PostgreSQL)
-* Groq (AI assistant)
+* Groq (Sage AI assistant)
 
 ---
 
@@ -127,7 +125,7 @@ StudyAI/
 ├── src/
 │   ├── app/        # Pages (one folder per route)
 │   ├── components/ # Layout and UI components
-│   ├── data/       # Static study content (DSA sheet, Core CS, aptitude)
+│   ├── data/       # Static study content (DSA sheet, Core CS, aptitude, flashcards)
 │   ├── hooks/
 │   ├── lib/
 │   └── services/
@@ -151,6 +149,6 @@ StudyAI/
 
 ## 👨‍💻 Author
 
-Developed by Sparsh Chauhan as a student productivity and revision management platform.
+Developed by [Sparsh Chauhan](https://sparsh-chauhan.vercel.app) as an all-in-one placement and interview prep platform.
 
 If you found this project useful, consider giving it a ⭐ on GitHub.
